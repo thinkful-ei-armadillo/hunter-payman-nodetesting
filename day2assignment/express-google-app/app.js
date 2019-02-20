@@ -13,7 +13,7 @@ app.get('/apps', (req, res) => {
   let { sort, genres } = req.query;
   let results = playstore;
   if (sort) {
-    if (!['rating', 'app'].includes(sort)) {
+    if (!['rating', 'app'].includes(sort.toLowerCase())) {
       return res.status(400).send('Sort must be one of rating or app');
     }
   }
@@ -33,11 +33,10 @@ app.get('/apps', (req, res) => {
   }
 
   if (genres) {
-    results = results.filter((r) => {
+    results = results.filter(r => {
       return r.Genres.toUpperCase() === genres.toUpperCase();
     });
   }
-
 
   if (sort) {
     results.sort((a, b) => {
@@ -49,6 +48,4 @@ app.get('/apps', (req, res) => {
   res.json(results);
 });
 
-app.listen(8000, () => {
-  console.log('Server started on port 8000');
-});
+module.exports = app;
