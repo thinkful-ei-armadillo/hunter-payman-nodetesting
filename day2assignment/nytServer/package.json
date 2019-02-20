@@ -15,8 +15,9 @@
     "supertest": "^3.4.2"
   },
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "node server.js",
+    "debug": "ndb node server",
+    "dev": "nodemon server.js",
     "test": "mocha"
   },
   "author": "",
