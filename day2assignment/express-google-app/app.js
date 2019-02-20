@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -13,7 +15,7 @@ app.get('/apps', (req, res) => {
   let { sort, genres } = req.query;
   let results = playstore;
   if (sort) {
-    if (!['rating', 'app'].includes(sort.toLowerCase())) {
+    if (!['rating', 'app'].includes(sort.toLowerCase().trim())) {
       return res.status(400).send('Sort must be one of rating or app');
     }
   }
@@ -21,7 +23,7 @@ app.get('/apps', (req, res) => {
   if (genres) {
     if (
       !['action', 'puzzle', 'strategy', 'casual', 'arcade', 'card'].includes(
-        genres.toLowerCase()
+        genres.toLowerCase().trim()
       )
     ) {
       return res

@@ -1,3 +1,5 @@
+'use strict';
+
 const expect = require('chai').expect;
 const request = require('supertest');
 const app = require('../app');
@@ -28,7 +30,7 @@ describe('GET /apps', () => {
       });
   });
 
-  it.only('if sorted by app should return the first appropriate app', () => {
+  it('if sorted by app should return the first appropriate app', () => {
     const expected = {
       App: 'Angry Birds Rio',
       Category: 'GAME',
@@ -55,7 +57,7 @@ describe('GET /apps', () => {
       });
   });
 
-  it.only('if sorted by rating should return the first appropriate app', () => {
+  it('if sorted by rating should return the first appropriate app', () => {
     const expected = {
       App: 'Block Puzzle Classic Legend !',
       Category: 'GAME',
@@ -82,7 +84,7 @@ describe('GET /apps', () => {
       });
   });
 
-  it.only('if genres and sort by app name should return the first appropriate app', () => {
+  it('if genres and sort by app name should return the first appropriate app', () => {
     const expected = {
       App: 'Bubble Shooter',
       Category: 'GAME',
@@ -109,6 +111,34 @@ describe('GET /apps', () => {
       });
   });
 
+  // test fails due to lowercase
+  it('if sort by app name should return the last appropriate app', () => {
+    const expected = {
+      App: 'Zombie Hunter King',
+      Category: 'GAME',
+      Rating: 4.3,
+      Reviews: '10306',
+      Size: '50M',
+      Installs: '1,000,000+',
+      Type: 'Free',
+      Price: '0',
+      'Content Rating': 'Mature 17+',
+      Genres: 'Action',
+      'Last Updated': 'August 1, 2018',
+      'Current Ver': '1.0.8',
+      'Android Ver': '2.3 and up'
+    };
+
+    return request(app)
+      .get('/apps')
+      .query({ sort: 'App' })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .then(res => {
+        expect(res.body[res.body.length -1]).to.deep.equal(expected);
+      });
+  });
+
   it('should be 400 if sort is incorrect', () => {
     return request(app)
       .get('/apps')
@@ -120,10 +150,8 @@ describe('GET /apps', () => {
     return request(app)
       .get('/apps')
       .query({ genres: 'MMO' })
-      .expect(
-        400,
-        'Genres must be one action, puzzle, strategy, casual, arcade, card'
-      );
+      .expect(400,
+        'Genres must be one of action, puzzle, strategy, casual, arcade, or card');
   });
 
   it('should be 200 if sort is capitalized and correct', () => {
@@ -147,6 +175,13 @@ describe('GET /apps', () => {
       .expect(200);
   });
 
+  it('should be 200 if sort has spaces around it and correct', () => {
+    return request(app)
+      .get('/apps')
+      .query({ sort: '  Rating ' })
+      .expect(200);
+  });
+
   it('should be 200 if genres is capitalized and correct', () => {
     return request(app)
       .get('/apps')
@@ -165,6 +200,13 @@ describe('GET /apps', () => {
     return request(app)
       .get('/apps')
       .query({ genres: 'CARD' })
+      .expect(200);
+  });
+
+  it('should be 200 if genres is uppercase and correct', () => {
+    return request(app)
+      .get('/apps')
+      .query({ genres: ' Card  ' })
       .expect(200);
   });
 });
