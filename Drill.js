@@ -12,3 +12,5 @@ function sort(list) {
   }
   return list;
 }
+
+module.exports = sort;
